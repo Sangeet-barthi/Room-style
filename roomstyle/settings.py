@@ -38,6 +38,12 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+ALLOWED_HOSTS = [*ALLOWED_HOSTS, "roomstyle-inky.vercel.app"]
+
+vercel_host = os.getenv("VERCEL_URL")
+if vercel_host:
+    ALLOWED_HOSTS.append(vercel_host)
+
 
 # Application definition
 

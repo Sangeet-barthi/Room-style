@@ -31,15 +31,14 @@ def home(request):
                 "error": "Image must be smaller than 10 MB."
             })
 
-        room = RoomImage.objects.create(image=image)
-
         try:
+            image_bytes = image.read()
+            image.seek(0)
+            room = RoomImage.objects.create(image=image)
+
             client = genai.Client(
                 api_key=os.environ["GEMINI_API_KEY"]
             )
-
-            with room.image.open("rb") as file:
-                image_bytes = file.read()
 
             prompt = """
 Analyze this uploaded room photo as a professional interior designer.

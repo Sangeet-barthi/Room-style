@@ -6,6 +6,7 @@ A Django app that accepts a room photo and uses the Gemini API to generate inter
 
 - Python 3.12
 - A Gemini API key
+- A PostgreSQL database and Cloudinary account for Vercel deployments
 
 ## Local setup
 
@@ -33,4 +34,14 @@ A Django app that accepts a room photo and uses the Gemini API to generate inter
 
 Open `http://127.0.0.1:8000/` in your browser.
 
-Uploaded images and the SQLite database are local runtime data and are excluded from Git.
+Locally, Django uses SQLite and filesystem media storage unless `DATABASE_URL` or `CLOUDINARY_URL` is set. Uploaded images and the local SQLite database are excluded from Git.
+
+## Vercel configuration
+
+Vercel's deployment filesystem is read-only and ephemeral. Configure these environment variables in the Vercel project settings; use the actual values from your providers and do not commit them:
+
+- `DATABASE_URL`: a persistent PostgreSQL connection URL. The deployment requires this instead of SQLite.
+- `CLOUDINARY_URL`: Cloudinary's API URL in the form `cloudinary://API_KEY:API_SECRET@CLOUD_NAME`. This keeps uploaded room photos available to the homepage and analysis history.
+- `DJANGO_SECRET_KEY` and `GEMINI_API_KEY`: the Django and Gemini secrets used by the app.
+
+Set the variables for each Vercel environment you deploy (Production, Preview, and Development as applicable), then redeploy. Before using the deployed app, run `python manage.py migrate` with `DATABASE_URL` set to the hosted PostgreSQL database. The app does not have schema changes from this update; this applies any existing migrations to the new database.

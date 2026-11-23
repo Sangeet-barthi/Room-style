@@ -44,6 +44,13 @@ vercel_host = os.getenv("VERCEL_URL")
 if vercel_host:
     ALLOWED_HOSTS.append(vercel_host)
 
+database_url = os.getenv("DATABASE_URL")
+cloudinary_url = os.getenv("CLOUDINARY_URL")
+if os.getenv("VERCEL") and not database_url:
+    raise ImproperlyConfigured("Set DATABASE_URL to a persistent PostgreSQL database on Vercel.")
+if os.getenv("VERCEL") and not cloudinary_url:
+    raise ImproperlyConfigured("Set CLOUDINARY_URL for persistent media storage on Vercel.")
+
 
 # Application definition
 
@@ -56,6 +63,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rooms',
 ]
+
+if cloudinary_url:
+    INSTALLED_APPS += [
+        'cloudinary_storage',
+        'cloudinary',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -90,12 +103,23 @@ WSGI_APPLICATION = 'roomstyle.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if database_url:
+    import dj_database_url
+
+    DATABASES = {
+        'default': dj_database_url.parse(
+            database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -146,3 +170,13 @@ MAILERS = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+if cloudinary_url:
+    STORAGES = {
+        'default': {
+            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }

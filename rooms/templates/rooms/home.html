@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomStyle AI | Reimagine Your Space</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark: #202b28;
+            --green: #496b59;
+            --cream: #f8f7f3;
+            --muted: #777f79;
+            --border: #e4e8e1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', Arial, sans-serif;
+            color: var(--dark);
+            background: var(--cream);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 22px 7%;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--green);
+        }
+
+        .history-link {
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 11px 17px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .history-link:hover {
+            background: #edf3ee;
+        }
+
+        .hero {
+            padding: 75px 20px 35px;
+            text-align: center;
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 9px 16px;
+            background: #e8f0e9;
+            border: 1px solid #d5e4d7;
+            color: var(--green);
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(40px, 6vw, 68px);
+            line-height: 1.13;
+            font-weight: 600;
+            letter-spacing: -1.8px;
+            margin: 25px 0 20px;
+        }
+
+        .hero h1 span {
+            color: var(--green);
+        }
+
+        .hero-description {
+            max-width: 620px;
+            margin: 0 auto;
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--muted);
+        }
+
+        .upload-card {
+            max-width: 690px;
+            margin: 42px auto 0;
+            padding: 34px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: 0 18px 55px rgba(35, 55, 42, 0.07);
+            text-align: left;
+        }
+
+        .upload-card h2 {
+            margin: 0 0 8px;
+            font-size: 23px;
+            letter-spacing: -0.5px;
+        }
+
+        .upload-card > p {
+            margin: 0 0 25px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .drop-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+            padding: 25px;
+            border: 2px dashed #b7c9ba;
+            border-radius: 16px;
+            background: #f9fbf8;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--green);
+            background: #f0f6f0;
+        }
+
+        .upload-icon {
+            width: 62px;
+            height: 62px;
+            display: grid;
+            place-items: center;
+            background: #e5eee6;
+            border-radius: 16px;
+            margin-bottom: 14px;
+            font-size: 29px;
+        }
+
+        .drop-zone strong {
+            font-size: 15px;
+        }
+
+        .drop-zone small {
+            margin-top: 9px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        .preview {
+            display: none;
+            max-width: 100%;
+            max-height: 240px;
+            margin: 15px auto 0;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .selected-name {
+            margin-top: 12px;
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 22px;
+            padding: 17px;
+            background: var(--green);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #365440;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 16px;
+            text-align: center;
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 1050px;
+            padding: 25px 20px 65px;
+            margin: auto;
+        }
+
+        .feature {
+            padding: 25px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .feature-icon {
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            margin: 0 0 9px;
+        }
+
+        .feature p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .results {
+            max-width: 1050px;
+            margin: 10px auto 65px;
+            padding: 0 20px;
+        }
+
+        .results-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 36px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .image-card,
+        .analysis-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-top: 22px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.035);
+        }
+
+        .image-card h2,
+        .analysis-card h2 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .room-image {
+            display: block;
+            width: 100%;
+            max-width: 600px;
+            max-height: 450px;
+            object-fit: contain;
+            margin: 20px auto 0;
+            border-radius: 12px;
+        }
+
+        .analysis-content {
+            line-height: 1.85;
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .analysis-content h1,
+        .analysis-content h2,
+        .analysis-content h3 {
+            color: var(--green);
+            margin-top: 28px;
+        }
+
+        .analysis-content h3 {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .analysis-content li {
+            margin-bottom: 9px;
+        }
+
+        .analysis-content p {
+            margin: 12px 0;
+        }
+
+        .error {
+            padding: 16px 20px;
+            background: #fff1f1;
+            border: 1px solid #f3cece;
+            border-radius: 12px;
+            color: #b42318;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        footer {
+            padding: 28px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            nav {
+                padding: 18px 5%;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .history-link {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .hero {
+                padding-top: 48px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .upload-card {
+                padding: 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                padding-bottom: 45px;
+            }
+
+            .image-card,
+            .analysis-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/" class="logo">RoomStyle<span>AI.</span></a>
+
+    <a href="{% url 'analysis_history' %}" class="history-link">
+        View Analysis History
+    </a>
+</nav>
+
+<main>
+    <section class="hero">
+        <div class="eyebrow">AI-Powered Interior Design</div>
+
+        <h1>
+            Reimagine Your Space.<br>
+            <span>Discover Its Potential.</span>
+        </h1>
+
+        <p class="hero-description">
+            Upload a photo of your room and discover its design style,
+            color palette, furniture ideas, and personalized interior
+            design recommendations.
+        </p>
+
+        <div class="upload-card">
+            <h2>Start Your Room Analysis</h2>
+            <p>Upload a clear photo of your interior to get started.</p>
+
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  id="uploadForm">
+
+                {% csrf_token %}
+
+                <label for="roomImage" class="drop-zone" id="dropZone">
+                    <span class="upload-icon">⌂</span>
+                    <strong>Click to choose a room photo</strong>
+                    <small>JPG, PNG or other supported images · Max 10 MB</small>
+
+                    <img id="preview" class="preview"
+                         alt="Selected room preview">
+
+                    <span class="selected-name" id="fileName"></span>
+                </label>
+
+                <input type="file"
+                       id="roomImage"
+                       name="room_image"
+                       accept="image/*"
+                       required>
+
+                <button type="submit"
+                        class="btn"
+                        id="submitBtn">
+                    Analyze My Room →
+                </button>
+
+                <div class="loading" id="loading">
+                    Analyzing your room... Please wait.
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {% if error %}
+    <section class="results">
+        <p class="error">{{ error }}</p>
+    </section>
+    {% endif %}
+
+    {% if success %}
+    <section class="results" id="results">
+        <h2 class="results-title">Your Room Analysis</h2>
+
+        {% if uploaded_image %}
+        <div class="image-card">
+            <h2>Uploaded Room</h2>
+            <img src="{{ uploaded_image }}"
+                 alt="Uploaded room"
+                 class="room-image">
+        </div>
+        {% endif %}
+
+        {% if analysis %}
+        <div class="analysis-card">
+            <h2>AI Interior Design Recommendations</h2>
+            <div class="analysis-content"
+                 id="analysisResult">{{ analysis }}</div>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="features">
+        <div class="feature">
+            <div class="feature-icon">✦</div>
+            <h3>Room Style Detection</h3>
+            <p>Identify your room's interior design style and discover what makes it unique.</p>
+        </div>
+
+        <div class="feature">
+            <div class="feature-icon">◈</div>
+            <h3>Color & Furniture Ideas</h3>
+            <p>Explore coordinated colors, furniture suggestions, and styling improvements.</p>
+        </div>
+
+        <div class="feature">
+            <div class="feature-icon">▦</div>
+            <h3>Space Optimization</h3>
+            <p>Discover practical ways to improve your room's layout, comfort, and functionality.</p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    © 2026 RoomStyle AI · Smart Interior Design Assistant
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+
+<script>
+    const form = document.getElementById("uploadForm");
+    const button = document.getElementById("submitBtn");
+    const loading = document.getElementById("loading");
+    const fileInput = document.getElementById("roomImage");
+    const preview = document.getElementById("preview");
+    const fileName = document.getElementById("fileName");
+    const dropZone = document.getElementById("dropZone");
+
+    fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) {
+            preview.style.display = "none";
+            fileName.textContent = "";
+            return;
+        }
+
+        fileName.textContent = file.name;
+
+        if (file.type.startsWith("image/")) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        } else {
+            preview.style.display = "none";
+        }
+    });
+
+    form.addEventListener("submit", function (event) {
+        const file = fileInput.files[0];
+
+        if (file && file.size > 10 * 1024 * 1024) {
+            event.preventDefault();
+            alert("Please select an image smaller than 10 MB.");
+            return;
+        }
+
+        button.disabled = true;
+        loading.style.display = "block";
+    });
+
+    const analysis = document.getElementById("analysisResult");
+
+    if (analysis && window.marked && window.DOMPurify) {
+        const markdownText = analysis.textContent;
+        const formattedHTML = marked.parse(markdownText);
+        analysis.innerHTML = DOMPurify.sanitize(formattedHTML);
+    }
+
+    if (document.getElementById("results")) {
+        document.getElementById("results").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis History | RoomStyle AI</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fc;
+            color: #192957;
+        }
+
+        header {
+            background: #192957;
+            color: white;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .room-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        }
+
+        .room-card img {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 10px;
+        }
+
+        .analysis {
+            margin-top: 20px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .date {
+            color: #667085;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>RoomStyle AI</h2>
+        <a href="{% url 'home' %}">Back to Home</a>
+    </header>
+
+    <main>
+        <h1>Your Analysis History</h1>
+
+        {% for room in rooms %}
+            <div class="room-card">
+
+                <h2>Room {{ room.id }}</h2>
+
+                <p class="date">
+                    Uploaded: {{ room.uploaded_at|date:"d M Y, h:i A" }}
+                </p>
+
+                <img src="{{ room.image.url }}" alt="Uploaded room">
+
+                <div class="analysis">{{ room.formatted_analysis|safe }}</div>
+            </div>
+        {% empty %}
+            <div class="room-card">
+                <h2>No analysis history yet</h2>
+                <p>Upload a room photo to get started!</p>
+            </div>
+        {% endfor %}
+    </main>
+
+</body>
+</html>
